@@ -190,7 +190,7 @@ in {
               "avivbintangaringga/nix-monitor"
               "gustav0ar/drive-health"
             ];
-            auto_update = true;
+            auto_update = "all";
           };
 
           widget = {
