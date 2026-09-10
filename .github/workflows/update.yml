@@ -1,0 +1,62 @@
+# Weekly flake input update: bump flake.lock, evaluate every CI host via
+# `nix flake check`, and merge only if that passes. A failed check leaves
+# main untouched; the job log shows what broke.
+name: update
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            accept-flake-config = true
+
+      - name: Update inputs
+        id: update
+        run: |
+          nix flake update
+          if git diff --quiet flake.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Evaluate
+        if: steps.update.outputs.changed == 'true'
+        run: nix flake check --print-build-logs
+
+      - name: Open and merge PR
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          branch="flake-update/$(date -u +%Y-%m-%d)"
+          git switch -c "$branch"
+          # Redo the update with --commit-lock-file so the commit message
+          # lists every input change; the PR body reuses it.
+          git checkout -- flake.lock
+          nix flake update --commit-lock-file
+          git push -u origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "flake.lock: update $(date -u +%Y-%m-%d)" \
+            --body "$(git log -1 --format=%b)"
+          gh pr merge "$branch" --squash --delete-branch
