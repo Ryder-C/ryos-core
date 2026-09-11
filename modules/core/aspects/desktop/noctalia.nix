@@ -156,9 +156,15 @@ in {
 
           system.monitor.enabled = true;
 
+          # Lock must fire before screen-off. When the session locks, noctalia
+          # re-arms every idle behavior and runs the resume action of any that
+          # already idled (so screen_off is undone on unlock); done in the other
+          # order that re-lights the monitors and RGB at the lock timeout with
+          # nobody at the desk. Keep any behavior that idles the display, e.g.
+          # rgb-off in rgb.nix, at a timeout >= lock.timeout.
           idle.behavior = {
             lock = {
-              timeout = 600;
+              timeout = 300;
               enabled = true;
               action = "lock";
             };
