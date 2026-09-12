@@ -8,7 +8,7 @@
       inherit inputs;
       name = "sputnik";
       system = "aarch64-linux";
-      flakePath = "/home/ryder/sputnik";
+      flakePath = "/etc/nixos";
 
       aspects = ry: [
         ry.desktop
@@ -16,6 +16,7 @@
         ry.laptop
         (ry.charger {device = "macsmc-battery";})
         ry.tailscale
+        ry.discord
       ];
 
       aspect = {

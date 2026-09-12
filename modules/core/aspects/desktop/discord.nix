@@ -4,18 +4,23 @@
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  # Discord ships no aarch64-linux build.
-  ry.discord.homeManager = {
+  ry.discord.homeManager = {pkgs, ...}: let
+    # The native Discord client has no aarch64-linux build
+    # (meta.platforms = x86_64-linux, x86_64-darwin, aarch64-darwin), so on ARM
+    # Linux (sputnik/Asahi) fall back to Equibop: an Electron wrapper with
+    # Equicord built in. nixcord's shared `config` below still applies to it.
+    useEquibop = pkgs.stdenv.hostPlatform.isLinux && pkgs.stdenv.hostPlatform.isAarch64;
+  in {
     imports = [inputs.nixcord.homeModules.nixcord];
 
     programs.nixcord = {
       enable = true;
       discord = {
-        enable = true;
+        enable = !useEquibop;
         vencord.enable = false;
         equicord.enable = true;
       };
-      equibop.enable = false;
+      equibop.enable = useEquibop;
       vesktop.enable = false;
 
       config = {

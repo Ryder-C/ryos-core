@@ -32,7 +32,12 @@
 
   swapDevices = [];
 
-  hardware.asahi.peripheralFirmwareDirectory = /boot/asahi;
+  hardware.asahi = {
+    enable = true;
+    # Copied from /boot/vendorfw (firmware.cpio); /boot can't be read in pure
+    # eval. Re-copy after the Asahi installer updates the ESP firmware.
+    peripheralFirmwareDirectory = ./firmware;
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }

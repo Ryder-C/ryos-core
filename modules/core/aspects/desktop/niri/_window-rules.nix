@@ -16,6 +16,13 @@
         focus-ring.enable = false;
       }
       {
+        # Browsers apply their own scroll acceleration, so the global touchpad
+        # scroll-factor (tuned for native/Qt apps) is too fast here. This
+        # multiplies with the input device factor: 0.5 (global) * 0.5 = 0.25.
+        matches = [{app-id = "^helium$";}];
+        scroll-factor = 0.5;
+      }
+      {
         matches = [
           {app-id = "^code$";}
           {app-id = "^antigravity$";}

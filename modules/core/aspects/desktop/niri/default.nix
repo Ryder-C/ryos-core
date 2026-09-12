@@ -1,10 +1,14 @@
-{inputs, ...}: let
+{
+  inputs,
+  ry,
+  ...
+}: let
   rylib = import ../../../_lib.nix;
 in {
   flake-file.inputs.niri.url = "github:sodiboo/niri-flake";
 
   ry.niri = {
-    includes = [(rylib.groups ["seat"])];
+    includes = [(rylib.groups ["seat"]) ry.wayscriber];
 
     nixos = {
       lib,
@@ -115,6 +119,10 @@ in {
             touchpad = {
               tap = false;
               natural-scroll = true;
+              # Global factor tuned for native/Qt apps (e.g. noctalia) which
+              # apply no scroll acceleration of their own. Browsers amplify
+              # scroll internally, so they get an extra per-app multiplier via
+              # a window-rule in _window-rules.nix (search "scroll-factor").
               scroll-factor = 0.5;
             };
             warp-mouse-to-focus.enable = false;
