@@ -30,10 +30,47 @@
       options = ["fmask=0077" "dmask=0077"];
     };
 
+    # The tiering targets are NOT set here -- they live in the bcachefs
+    # superblock and are invisible to this file. Read them with
+    #   cat /sys/fs/bcachefs/<uuid>/options/{foreground,background,promote,metadata}_target
+    # and change them with `bcachefs set-fs-option --<opt> <target> <dev>`.
+    # Current shape: bulk writes straight to the spinning disks, with the
+    # single 231G SSD used for read promotion.
+    #   foreground_target=hdd  background_target=hdd
+    #   promote_target=ssd     metadata_target=none
+    #
+    # THE `ssd` GROUP HOLDS EXACTLY ONE DEVICE (nvme1n1). Any target pointing
+    # at it combined with replicas>1 is arithmetically unsatisfiable, and
+    # reconcile does not degrade gracefully -- it retries forever, restarts at
+    # extents:POS_MIN, and never reaches the work queued behind it, which
+    # stalls rebalance for the WHOLE filesystem. Two instances of this bit us:
+    #   - metadata_target=ssd + metadata_replicas=2 (fs-wide). Metadata had
+    #     16G permanently off-target, which blocked the data phase behind it
+    #     and left 228G stranded on the SSD. Fixed by clearing the target;
+    #     metadata_replicas stays 2, since losing metadata can cost the fs.
+    #   - /storage/.state had data_replicas=2 + background_target=ssd as an
+    #     xattr override. Cleared with `bcachefs set-file-option --remove-all`.
+    # Per-directory overrides are xattrs: `getfattr -d -m 'bcachefs\.' <dir>`.
+    #
+    # foreground_target was also previously `ssd`, which double-wrote every
+    # byte (SSD then HDD); dropping that took sdc from ~200ms to ~7ms awaits.
+    # A kernel upgrade that bumps the bcachefs on-disk version makes the next
+    # mount run recovery passes (check_allocations walks all ~87k btree nodes,
+    # ~8 min here) before mount(2) returns. systemd's default mount timeout is
+    # 90s, so it SIGTERMs the unit mid-pass, /storage never mounts, and every
+    # service with RequiresMountsFor=/storage dies with 'dependency'. The
+    # timeout must exceed the worst-case recovery, not the steady-state mount.
+    #
+    # compression/background_compression are deliberately absent: as of
+    # bcachefs 1.36 the kernel rejects them at mount time ("may no longer be
+    # specified at mount time; set via sysfs opts dir"). Both already live in
+    # the superblock as `none` -- read/change them under
+    #   /sys/fs/bcachefs/<uuid>/options/
+    # or with `bcachefs set-fs-option`.
     "/storage" = {
       device = "/dev/disk/by-uuid/7ab44d81-1059-45ff-bdd5-2cf0583dae7e";
       fsType = "bcachefs";
-      options = ["compression=none" "noatime" "nofail" "background_compression=none" "discard"];
+      options = ["noatime" "nofail" "discard" "x-systemd.mount-timeout=1h"];
     };
   };
 

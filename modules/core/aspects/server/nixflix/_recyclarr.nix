@@ -296,7 +296,7 @@ in {
           (cf "shows" "15a05bc7c1a36e2b57fd628f8977e2fc" (-20000)) # AV1
           (cf "shows" "23297a736ca77c0fc8e70f8edd7ee56c" (-20000)) # Upscaled
           (cf "shows" "fbcb31d8dabd2a319072b84fc0b7249c" (-20000)) # Extras
-          (cf "shows" "9b27ab6498ec0f31a3353992e19434ca" 0) # DV (WEBDL) -- 0, not blocked
+          (cf "shows" "9b27ab6498ec0f31a3353992e19434ca" (-20000)) # DV (w/o HDR fallback)
 
           # Extras
           (cf "shows" "3bc5f395426614e155e585a2f056cdf1" 1090) # Season Pack
@@ -366,7 +366,7 @@ in {
       custom_formats = [
         (cf "anime" "949c16fe0a8147f50ba82cc2df9411c9" 1400) # Anime BD Tier 01
         (cf "anime" "ed7f1e315e000aef424a58517fa48727" 1300) # Anime BD Tier 02
-        (cf "anime" "096e406c92baa713da4a72d88030c5ed" 1200) # Anime BD Tier 03
+        (cf "anime" "096e406c92baa713da4a72d88030b815" 1200) # Anime BD Tier 03
         (cf "anime" "30feba9da3030c5ed1e0f7d610bcadc4" 1100) # Anime BD Tier 04
         (cf "anime" "545a76b14ddc349b8b185a6344e28b04" 1000) # Anime BD Tier 05
         (cf "anime" "25d2afecab632b1582eaf03b63055f72" 900) # Anime BD Tier 06

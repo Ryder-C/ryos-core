@@ -8,7 +8,10 @@ in {
     services.bazarr = {
       enable = true;
       group = "media";
-      dataDir = "/storage/.state/bazarr";
+      # Kept alongside the other service state on the root NVMe -- see the
+      # stateDir comment in ./default.nix for why none of this belongs on
+      # /storage.
+      dataDir = "/var/lib/nixflix/bazarr";
     };
 
     # CDI device passthrough so the Whisper container can reach the GPU. The

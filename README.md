@@ -46,7 +46,7 @@ that wants raw den/flake-parts imports `core.flakeModules.default` instead.
 | Kind | Used for | Example |
 |---|---|---|
 | host facts | hardware truths several aspects read | `facts.nvidia = { open = false; driver = "legacy_580"; }` |
-| sub-aspects (`provides`) | optional parts of an aspect | `ry.editor.helix`, `ry.nixflix.onepace`, `ry.flatpak.sober` |
+| sub-aspects (`provides`) | optional parts of an aspect | `ry.editor.helix`, `ry.nixflix.seadexerr`, `ry.flatpak.sober` |
 | callable aspects | one aspect, one parameter set | `ry.charger { device = "macsmc-battery"; }`, `ry.rgb { motherboard = "intel"; }` |
 | quirks | many producers, one consumer | any aspect emits `homepage`/`vhost` entries; `ry.homepage`/`ry.caddy` render them |
 
@@ -58,9 +58,9 @@ Account-scoped secrets (`pia`, `cloudflare-api-token`, `steam_key`,
 `google-maps`) are agenix files in `secrets/`, decryptable by the hosts listed
 in `secrets/secrets.nix` (add a host key there and `agenix -r` to onboard one).
 
-Instance-local secrets (arr API keys, admin passwords, vaultwarden env) are
-supplied by the private host flake as `facts.secrets.<name>`, either a string
-or a path. Aspects consume them through the `secretFile`/`secretValue` module
+Instance-local secrets (arr API keys, admin passwords, vaultwarden env, the
+matrix registration token) are supplied by the private host flake as
+`facts.secrets.<name>`, either a string or a path. Aspects consume them through the `secretFile`/`secretValue` module
 arguments; a host-supplied value always wins over the agenix fallback. Either
 form ends up world-readable in `/nix/store` on that host, which is the same
 exposure the previous config had for the hardcoded arr keys. Each aspect's

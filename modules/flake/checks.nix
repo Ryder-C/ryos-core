@@ -37,6 +37,8 @@
       "qui"
       "vaultwarden"
       "cross-seed"
+      "anilist"
+      "matrix-registration"
     ]);
 in {
   flake.nixosConfigurations = {
@@ -115,13 +117,18 @@ in {
         ry.guessr
         ry.nixflix
         ry.nixflix.onepace
+        ry.nixflix.onepace-fill
         ry.nixflix.bazarr
         ry.nixflix.autobrr
         ry.nixflix.drainarr
         ry.nixflix.qui
         ry.nixflix.redirecterr
+        ry.nixflix.seadexerr
+        ry.nixflix.arr-mcp
+        ry.matrix
         ry.steam
         ry.steam.kiosk
+        ry.ai
       ];
       aspect = fakeDisk;
     };

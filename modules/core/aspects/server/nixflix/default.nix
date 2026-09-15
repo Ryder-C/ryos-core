@@ -25,7 +25,8 @@ in {
   # Jellyfin + Seerr + the *arr stack on /storage, downloading through
   # ry.torrents. Host secrets: jellyfin-api, jellyfin-admin, seerr-api,
   # radarr-api, sonarr-api, sonarr-anime-api, prowlarr-api, arr-password.
-  # Extras: ry.nixflix.{onepace,bazarr,autobrr,drainarr,qui,redirecterr}.
+  # Extras: ry.nixflix.{onepace,onepace-fill,bazarr,autobrr,drainarr,qui,
+  # redirecterr,seadexerr,arr-mcp}.
   ry.nixflix = {config, ...}: {
     includes = [
       ry.torrents
@@ -58,8 +59,10 @@ in {
             # putting them on different bind mounts inside the service's
             # namespace. link() then returns EXDEV across them and the *arrs
             # fall back to copy. Collapse to a single covering bind mount so
-            # hardlinks work.
-            hardlinkFix.serviceConfig.ReadWritePaths = lib.mkForce ["/storage"];
+            # hardlinks work. stateDir is outside /storage, so it must be listed
+            # too or ProtectSystem=strict leaves the service unable to write its
+            # own DB.
+            hardlinkFix.serviceConfig.ReadWritePaths = lib.mkForce ["/storage" "/var/lib/nixflix"];
           in {
             radarr = deps // hardlinkFix;
             sonarr = deps // hardlinkFix;
@@ -73,7 +76,13 @@ in {
           nixflix = {
             enable = true;
             mediaDir = "/storage/media/library";
-            stateDir = "/storage/.state";
+            # Service state (SQLite DBs) lives on the root NVMe, not /storage.
+            # The bcachefs `ssd` group is a single device, so data_replicas=2 on
+            # /storage/.state always placed the second replica on a spinning
+            # disk; every fsync then waited on the HDD array (sdc regularly at
+            # 100% util, ~200ms awaits), which made seerr take ~0.9s to serve a
+            # bare redirect.
+            stateDir = "/var/lib/nixflix";
             downloadsDir = "/storage/Torrents";
 
             jellyfin = {
@@ -83,6 +92,35 @@ in {
               users.ryder = {
                 policy.isAdministrator = true;
                 password._secret = secretFile "jellyfin-admin";
+              };
+
+              # Library settings tuned by hand in the Jellyfin UI.
+              # jellyfin-libraries PUTs its declarative options on every start,
+              # and nixflix sends the whole payload including empty lists and
+              # nulls, so anything not pinned here is reset on the next rebuild.
+              # These merge with the module's own definitions -- collectionType,
+              # paths, and typeOptions still come from the sonarr/radarr
+              # defaults, so no mkForce needed.
+              libraries = let
+                # Both would otherwise be blanked to []. Dropping the segment
+                # provider is what silently breaks Intro Skipper.
+                common = {
+                  localMetadataReaderOrder = ["Nfo"];
+                  mediaSegmentProviderOrder = ["Intro Skipper"];
+                  preferredMetadataLanguage = "";
+                  metadataCountryCode = "";
+                };
+                # Series libraries additionally drift on these two.
+                series =
+                  common
+                  // {
+                    automaticRefreshIntervalDays = 30;
+                    enableEmbeddedTitles = false;
+                  };
+              in {
+                Movies = common;
+                Shows = series;
+                Anime = series;
               };
 
               encoding = {
@@ -142,7 +180,11 @@ in {
               };
             };
 
-            flaresolverr.enable = true;
+            # Disabled: FlareSolverr is deprecated upstream and no longer clears
+            # Cloudflare Turnstile / managed challenges, so it only added a
+            # proxy hop that fails. Byparr is the drop-in successor (same /v1
+            # API on :8191) if Prowlarr indexers start needing a solver again.
+            flaresolverr.enable = false;
 
             recyclarr = {
               enable = true;
@@ -229,10 +271,13 @@ in {
       };
 
       onepace = import ./_onepace.nix;
+      onepace-fill = import ./_onepace-fill.nix;
       bazarr = import ./_bazarr.nix;
       autobrr = import ./_autobrr.nix;
       qui = import ./_qui.nix;
       redirecterr = import ./_redirecterr.nix;
+      seadexerr = import ./_seadexerr.nix;
+      arr-mcp = import ./_arr-mcp.nix;
     };
   };
 }
