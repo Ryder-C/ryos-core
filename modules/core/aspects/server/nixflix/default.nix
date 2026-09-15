@@ -89,6 +89,12 @@ in {
               enable = true;
               openFirewall = true;
               apiKey._secret = secretFile "jellyfin-api";
+
+              # nixflix auto-installs the AniDB metadata plugin whenever
+              # sonarr-anime is enabled, pinned to a version with no Jellyfin
+              # 12 release. It isn't used here, so keep it off.
+              plugins.AniDB.enable = false;
+
               users.ryder = {
                 policy.isAdministrator = true;
                 password._secret = secretFile "jellyfin-admin";
