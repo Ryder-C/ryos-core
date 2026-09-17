@@ -28,7 +28,7 @@ in {
       })
     ];
 
-    home.packages = [pkgs.brave helium];
+    home.packages = [pkgs.google-chrome helium];
     home.sessionVariables.BROWSER = "helium";
 
     xdg.mimeApps = {
