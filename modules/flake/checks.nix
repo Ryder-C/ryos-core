@@ -69,6 +69,7 @@ in {
         ry.gpu-screen-recorder
         ry.gpu-screen-recorder.replay
         ry.obs
+        ry.sunshine
         ry.docker
         ry.libvirt
         ry.waydroid
