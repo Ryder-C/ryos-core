@@ -816,19 +816,6 @@
         "type": "github"
       }
     },
-    "jellium-flatpak": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1789879034,
-        "narHash": "sha256-mpT7gO+MNvdiYniEuFZwfJHVk/vsqz74yeCrEbZ35fc=",
-        "type": "tarball",
-        "url": "https://nightly.link/andrewrabert/jellium-desktop/workflows/build-linux-flatpak/main/linux-flatpak-x86_64.zip"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://nightly.link/andrewrabert/jellium-desktop/workflows/build-linux-flatpak/main/linux-flatpak-x86_64.zip"
-      }
-    },
     "librepods": {
       "inputs": {
         "crane": "crane",
@@ -1593,7 +1580,6 @@
         "humanizer": "humanizer",
         "hytale-flatpak": "hytale-flatpak",
         "import-tree": "import-tree",
-        "jellium-flatpak": "jellium-flatpak",
         "librepods": "librepods",
         "niri": "niri",
         "nix-index-database": "nix-index-database",

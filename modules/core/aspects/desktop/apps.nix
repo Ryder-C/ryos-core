@@ -59,6 +59,7 @@ in {
             fladder
             gifsicle
             imv
+            jellyfin-desktop
             libvlc
           ]);
         };

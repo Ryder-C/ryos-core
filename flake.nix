@@ -52,10 +52,6 @@
       flake = false;
     };
     import-tree.url = "github:vic/import-tree";
-    jellium-flatpak = {
-      url = "https://nightly.link/andrewrabert/jellium-desktop/workflows/build-linux-flatpak/main/linux-flatpak-x86_64.zip";
-      flake = false;
-    };
     librepods = {
       url = "github:kavishdevar/librepods/linux/rust";
       inputs.nixpkgs.follows = "nixpkgs";

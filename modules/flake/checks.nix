@@ -63,7 +63,6 @@ in {
         ry.flatpak.sober
         ry.flatpak.plex
         ry.flatpak.hytale
-        ry.flatpak.jellium
         ry.tailscale
         ry.wayscriber
         ry.gpu-screen-recorder

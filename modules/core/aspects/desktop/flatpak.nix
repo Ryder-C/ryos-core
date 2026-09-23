@@ -5,14 +5,10 @@
       url = "https://launcher.hytale.com/builds/release/linux/amd64/hytale-launcher-latest.flatpak";
       flake = false;
     };
-    jellium-flatpak = {
-      url = "https://nightly.link/andrewrabert/jellium-desktop/workflows/build-linux-flatpak/main/linux-flatpak-x86_64.zip";
-      flake = false;
-    };
   };
 
   # `ry.flatpak` = flatpak + flathub + Flatseal. Apps are opt-in:
-  # ry.flatpak.{sober,plex,hytale,jellium}.
+  # ry.flatpak.{sober,plex,hytale}.
   ry.flatpak = {
     nixos.services.flatpak.enable = true;
 
@@ -43,17 +39,6 @@
         services.flatpak.packages = [
           ":${pkgs.runCommand "hytale-launcher.flatpak" {} "ln -s ${inputs.hytale-flatpak} $out"}"
         ];
-      };
-
-      jellium.homeManager = {pkgs, ...}: {
-        services.flatpak = {
-          packages = [
-            ":${pkgs.runCommand "jellium-desktop.flatpak" {} "ln -s ${inputs.jellium-flatpak} $out"}"
-          ];
-          overrides."net.nullsum.JelliumDesktop"."System Bus Policy" = {
-            "org.freedesktop.login1" = "talk";
-          };
-        };
       };
     };
   };

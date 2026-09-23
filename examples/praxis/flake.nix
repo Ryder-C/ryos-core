@@ -33,7 +33,6 @@
         ry.flatpak.sober
         ry.flatpak.plex
         ry.flatpak.hytale
-        ry.flatpak.jellium
         ry.tailscale
         ry.gpu-screen-recorder
         ry.gpu-screen-recorder.replay
@@ -131,12 +130,6 @@
               };
             };
           };
-          window-rules = [
-            {
-              matches = [{app-id = "^net\\.nullsum\\.JelliumDesktop$";}];
-              open-on-output = "DP-3";
-            }
-          ];
         };
       };
     };
