@@ -5,7 +5,16 @@
 }: let
   rylib = import ../../../_lib.nix;
 in {
-  flake-file.inputs.niri.url = "github:sodiboo/niri-flake";
+  flake-file.inputs = {
+    niri.url = "github:sodiboo/niri-flake";
+    xwayland-satellite = {
+      url = "github:Supreeeme/xwayland-satellite";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
+  };
 
   ry.niri = {
     includes = [(rylib.groups ["seat"]) ry.wayscriber];
@@ -72,7 +81,7 @@ in {
         ./_window-rules.nix
       ];
 
-      home.packages = [pkgs.xwayland-satellite];
+      home.packages = [inputs.xwayland-satellite.packages.${pkgs.stdenv.hostPlatform.system}.default];
 
       xdg.portal = {
         enable = true;
