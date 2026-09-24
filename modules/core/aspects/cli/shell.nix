@@ -40,7 +40,7 @@
           # Nix
           nix-shell = "nix-shell --run fish";
           nix-clean = "nh clean all";
-          ns = "nh os switch";
+          ns = "nh os switch --update-input core";
           nst = "nh os test";
           nsb = "nh os boot";
 
