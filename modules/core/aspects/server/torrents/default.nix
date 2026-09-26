@@ -85,6 +85,20 @@
         mode = "0444";
       };
 
+      # PIA's forwarded port is dynamic, so accept any unprivileged port on the
+      # tunnel; PIA only forwards the one leased port from the internet anyway.
+      networking.firewall.interfaces.wg0 = let
+        ports = [
+          {
+            from = 1024;
+            to = 65535;
+          }
+        ];
+      in {
+        allowedTCPPortRanges = ports;
+        allowedUDPPortRanges = ports;
+      };
+
       users.groups.media = {};
 
       environment.systemPackages = [vpn-full];
@@ -145,12 +159,22 @@
 
         portForward = {
           enable = true;
+          # Runs on every refresh (~15 min). If qBittorrent is already up, push
+          # the (possibly new) port through the WebUI API instead of relaunching.
           script = ''
-            mkdir -p ${profileBase}/qBittorrent_${profName}
-            rm -f ${profileBase}/qBittorrent_${profName}/qBittorrent.conf
-            cp ${qbtConfig} ${profileBase}/qBittorrent_${profName}/qBittorrent.conf
-            umask 0002
-            ${pkgs.util-linux}/bin/runuser -u root -g media -- ${pkgs.qbittorrent-nox}/bin/qbittorrent-nox -d --confirm-legal-notice --torrenting-port=$port --profile=${profileBase} --configuration=${profName} || true
+            api=http://localhost:8080/api/v2
+            if current=$(${pkgs.curl}/bin/curl -sf -m 5 "$api/app/preferences" | ${pkgs.jq}/bin/jq -er .listen_port); then
+              if [ "$current" != "$port" ]; then
+                echo "Updating qBittorrent listen port $current -> $port"
+                ${pkgs.curl}/bin/curl -sf -m 5 "$api/app/setPreferences" --data-urlencode "json={\"listen_port\":$port}"
+              fi
+            else
+              mkdir -p ${profileBase}/qBittorrent_${profName}
+              rm -f ${profileBase}/qBittorrent_${profName}/qBittorrent.conf
+              cp ${qbtConfig} ${profileBase}/qBittorrent_${profName}/qBittorrent.conf
+              umask 0002
+              ${pkgs.util-linux}/bin/runuser -u root -g media -- ${pkgs.qbittorrent-nox}/bin/qbittorrent-nox -d --confirm-legal-notice --torrenting-port=$port --profile=${profileBase} --configuration=${profName} || true
+            fi
           '';
         };
       };
