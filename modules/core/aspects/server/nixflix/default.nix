@@ -25,7 +25,7 @@ in {
   # Jellyfin + Seerr + the *arr stack on /storage, downloading through
   # ry.torrents. Host secrets: jellyfin-api, jellyfin-admin, seerr-api,
   # radarr-api, sonarr-api, sonarr-anime-api, prowlarr-api, arr-password.
-  # Extras: ry.nixflix.{onepace,onepace-fill,bazarr,autobrr,drainarr,qui,
+  # Extras: ry.nixflix.{onepace,bazarr,autobrr,drainarr,qui,
   # redirecterr,seadexerr,arr-mcp}.
   ry.nixflix = {config, ...}: {
     includes = [
@@ -277,7 +277,6 @@ in {
       };
 
       onepace = import ./_onepace.nix;
-      onepace-fill = import ./_onepace-fill.nix;
       bazarr = import ./_bazarr.nix;
       autobrr = import ./_autobrr.nix;
       qui = import ./_qui.nix;

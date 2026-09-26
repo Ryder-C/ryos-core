@@ -59,7 +59,6 @@
         ry.matrix
         ry.nixflix
         ry.nixflix.onepace
-        ry.nixflix.onepace-fill
         ry.nixflix.bazarr
         ry.nixflix.autobrr
         ry.nixflix.drainarr

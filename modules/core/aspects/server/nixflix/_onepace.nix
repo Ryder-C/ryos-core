@@ -18,7 +18,14 @@
       # container sat on 1.7.9 for months. Version tags are published as
       # vX.Y.Z, so pin one and bump it deliberately. (v1.7.20 is what added
       # LIBRARY_USE_HARDLINKS.)
-      image = "ghcr.io/eltharynd/onepacerr:v1.7.20";
+      #
+      # The metadata API is live, not pinned: since v1.8.0 it maps unreleased
+      # episodes to fan "supplement" batches (Onigashima Paced for Wano,
+      # Shaved Egghead + Kuma Cut for Egghead), flagged partOfBundle. Clients
+      # older than v1.8.4 import every file of such a batch onto a single
+      # episode, leave the rest "missing", and re-add the torrent on every
+      # metadata update -- so don't pin below v1.8.4.
+      image = "ghcr.io/eltharynd/onepacerr:v1.8.11";
       # Host networking so it can reach Jellyfin (localhost:8096) and
       # qBittorrent (localhost:8080). Its status API is served on :3007.
       extraOptions = ["--network=host"];
@@ -94,6 +101,10 @@
         # Prefer extended cuts; swaps a standard cut for the extended one.
         PIPELINE_PREFER_EXTENDED = "true";
         PIPELINE_PREFER_ALTERNATE = "false";
+        # Fill One Pace's unfinished arcs from the supplement batches (see the
+        # image pin above). This is the upstream default; stated explicitly
+        # because it replaced the old onepace-fill timer.
+        PIPELINE_SKIP_SUPPLEMENTS = "false";
       };
     };
 
