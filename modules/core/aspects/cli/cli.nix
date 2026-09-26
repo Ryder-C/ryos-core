@@ -37,9 +37,14 @@
         settings = {
           theme_background = false;
           update_ms = 500;
+          # btop otherwise rewrites btop.conf on exit, replacing the HM symlink
+          # and breaking activation ("would be clobbered").
+          save_config_on_exit = false;
         };
       };
     };
+
+    xdg.configFile."btop/btop.conf".force = true;
 
     home.shellAliases = {
       cat = "bat";
