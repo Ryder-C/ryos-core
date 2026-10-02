@@ -1,16 +1,11 @@
 {
-  ry.irc.homeManager.programs.halloy = {
-    enable = true;
-    settings.servers = let
-      server = host: port: {
-        nickname = "ThePDB";
-        server = host;
-        inherit port;
-      };
-    in {
-      scratch-network = server "irc.scratch-network.net" 6697;
-      digitalcore = server "irc.digitalcore.club" 7000;
-      darkpeers = server "irc.darkpeers.org" 6697;
+  # Halloy config lives unmanaged in ~/.config/halloy/config.toml. Forcing
+  # settings empty stops HM generating it (catppuccin/nix would otherwise set
+  # `theme`); its theme file in halloy/themes/ is still installed.
+  ry.irc.homeManager = {lib, ...}: {
+    programs.halloy = {
+      enable = true;
+      settings = lib.mkForce {};
     };
   };
 }
