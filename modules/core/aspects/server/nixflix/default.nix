@@ -115,16 +115,53 @@ in {
                   mediaSegmentProviderOrder = ["Intro Skipper"];
                   preferredMetadataLanguage = "";
                   metadataCountryCode = "";
+                  # nixflix defaults this to off whenever the Sonarr/Radarr ->
+                  # Jellyfin "Connect" notification is on. Keep both.
+                  enableRealtimeMonitor = true;
                 };
+
+                # The module's typeOptions only know TMDb/OMDb (plus AniDB for
+                # Anime), which drops the TheTVDB plugin from every library on
+                # each start. typeOptions is a list, so a plain definition would
+                # be concatenated with the module's, hence mkForce.
+                fetchers = type: metadata: images: {
+                  inherit type;
+                  metadataFetchers = metadata;
+                  metadataFetcherOrder = metadata;
+                  imageFetchers = images;
+                  imageFetcherOrder = images;
+                };
+                screenshots = ["Embedded Image Extractor" "Screen Grabber"];
+                seriesTypeOptions = lib.mkForce [
+                  (fetchers "Series"
+                    ["TheTVDB" "TheMovieDb" "The Open Movie Database"]
+                    ["TheTVDB" "TheMovieDb"])
+                  (fetchers "Season"
+                    ["TheTVDB" "TheMovieDb"]
+                    ["TheTVDB" "TheMovieDb"])
+                  (fetchers "Episode"
+                    ["TheTVDB" "TheMovieDb" "The Open Movie Database"]
+                    (["TheTVDB" "TheMovieDb" "The Open Movie Database"] ++ screenshots))
+                ];
+
                 # Series libraries additionally drift on these two.
                 series =
                   common
                   // {
                     automaticRefreshIntervalDays = 30;
                     enableEmbeddedTitles = false;
+                    typeOptions = seriesTypeOptions;
                   };
               in {
-                Movies = common;
+                Movies =
+                  common
+                  // {
+                    typeOptions = lib.mkForce [
+                      (fetchers "Movie"
+                        ["TheMovieDb" "TheTVDB" "The Open Movie Database"]
+                        (["TheMovieDb" "TheTVDB" "The Open Movie Database"] ++ screenshots))
+                    ];
+                  };
                 Shows = series;
                 Anime = series;
               };
@@ -142,6 +179,25 @@ in {
               };
 
               branding.customCss = ''@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");'';
+            };
+
+            # The "Emby / Jellyfin" Connect entry nixflix adds to each arr is
+            # built from the arr's schema template, where every trigger is
+            # false, so it never fired. Extra attrs here are merged into the
+            # payload (top-level keys and matching field values) on every run.
+            # Sonarr and Radarr share this; each ignores the other's keys.
+            notif.jellyfin = {
+              updateLibrary = true;
+              onDownload = true;
+              onUpgrade = true;
+              onImportComplete = true;
+              onRename = true;
+              onSeriesDelete = true;
+              onEpisodeFileDelete = true;
+              onEpisodeFileDeleteForUpgrade = true;
+              onMovieDelete = true;
+              onMovieFileDelete = true;
+              onMovieFileDeleteForUpgrade = true;
             };
 
             seerr = {
