@@ -1,4 +1,4 @@
-# DO-NOT-EDIT. This file was auto-generated using github:vic/flake-file.
+# DO-NOT-EDIT. This file was auto-generated using github:denful/flake-file.
 # Use `nix run .#write-flake` to regenerate it.
 {
   outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
@@ -13,18 +13,17 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    alejandra.url = "github:kamadorueda/alejandra";
-    apple-silicon-support.url = "github:tpwrules/nixos-apple-silicon";
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    apple-silicon-support.url = "github:nix-community/nixos-apple-silicon/main";
     catppuccin.url = "github:catppuccin/nix";
     catppuccin-stylus-json = {
       url = "https://github.com/catppuccin/userstyles/releases/download/all-userstyles-export/import.json";
       flake = false;
     };
     claude-code.url = "github:sadjow/claude-code-nix";
-    claude-desktop = {
-      url = "github:poeck/claude-desktop-nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     den.url = "github:denful/den";
     drainarr = {
       url = "github:ryder-c/drainarr";

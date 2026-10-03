@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  flake-file.inputs.apple-silicon-support.url = "github:tpwrules/nixos-apple-silicon";
+  flake-file.inputs.apple-silicon-support.url = "github:nix-community/nixos-apple-silicon/main";
 
   # Asahi NixOS on an M-series Mac. Display outputs, battery device and the
   # like stay with the host.

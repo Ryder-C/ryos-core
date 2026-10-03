@@ -2,7 +2,10 @@
   rylib = import ../../_lib.nix;
 in {
   flake-file.inputs = {
-    alejandra.url = "github:kamadorueda/alejandra";
+    alejandra = {
+      url = "github:kamadorueda/alejandra";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
