@@ -293,6 +293,7 @@ in {
               type = "jellyfin";
               url = "http://localhost:${toString ports.jellyfin}";
               key = key "jellyfin-api";
+              version = 2;
             };
           }
           {
