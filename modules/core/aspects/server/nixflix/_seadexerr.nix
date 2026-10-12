@@ -35,12 +35,7 @@
     };
 
     virtualisation.oci-containers.containers.seadexerr = {
-      # Pinned rather than `latest`: podman's --pull=missing (what
-      # oci-containers generates) never refreshes a cached tag, so `latest`
-      # stayed on v2.x through rebuilds. v3.0.0 moved the default port
-      # 6767 -> 2071 and added ANILIST_ACCESS_TOKEN, so the port is left unset
-      # and taken from the image.
-      image = "ghcr.io/ryder-c/seadexerr:v3.0.0";
+      image = "ghcr.io/ryder-c/seadexerr:v3.2.0";
       environment = {
         SONARR_BASE_URL = "http://localhost:8990/";
         RADARR_BASE_URL = "http://localhost:7878/";
