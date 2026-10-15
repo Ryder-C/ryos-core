@@ -1,8 +1,8 @@
-# Host secrets: autobrr (service secret file), autobrr-api (homepage widget).
+# Host secrets: autobrr-api (homepage widget).
 {host, ...}: let
   rylib = import ../../../_lib.nix;
 in {
-  nixos = {secretFile, ...}: {
+  nixos = {
     services.autobrr = {
       enable = true;
       openFirewall = true;
@@ -10,7 +10,6 @@ in {
         host = "0.0.0.0";
         logLevel = "DEBUG";
       };
-      secretFile = secretFile "autobrr";
     };
   };
 

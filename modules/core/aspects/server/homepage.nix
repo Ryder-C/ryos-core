@@ -10,7 +10,11 @@
     services.homepage-dashboard = {
       enable = true;
       openFirewall = true;
-      allowedHosts = "${config.networking.hostName}:8082";
+      allowedHosts = lib.concatStringsSep "," (map (h: "${h}:8082") [
+        config.networking.hostName
+        "${config.networking.hostName}.local"
+        "localhost"
+      ]);
 
       services =
         lib.mapAttrsToList
