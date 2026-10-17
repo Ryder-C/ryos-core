@@ -1,5 +1,5 @@
-# Claude Discord bot: whitelisted members @mention it and each pays for their
-# own answers through a monthly Stripe invoice.
+# Claude Discord bot: anyone who saves a card with /billing setup can @mention
+# it, and each pays for their own answers through a monthly Stripe invoice.
 #
 # Host secrets: claude-bot-discord (bot token), claude-bot-anthropic (API key),
 # claude-bot-stripe (secret key; sk_test_… while testing).

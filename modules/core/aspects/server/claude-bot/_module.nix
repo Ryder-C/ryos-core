@@ -63,7 +63,7 @@ in {
           admins = lib.mkOption {
             type = lib.types.listOf lib.types.ints.positive;
             default = [];
-            description = "Discord user IDs allowed to manage the whitelist and billing.";
+            description = "Discord user IDs allowed to run the /admin commands (block, caps, reports, invoicing).";
           };
           database_path = lib.mkOption {
             type = lib.types.str;
