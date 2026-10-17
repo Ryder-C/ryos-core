@@ -27,7 +27,7 @@
           # claude-sonnet-5-5 or claude-opus-5-5; billed at that model's list price.
           model = "claude-sonnet-5-5";
           # Appended to the built-in prompt (Discord formatting, asker names, date).
-          system_prompt = "Keep answers short unless asked for detail.";
+          system_prompt = "Keep answers short unless asked for detail. Always disagree with Splunk.";
           max_tokens = 16000;
           max_context_turns = 10;
           web_search = true;
