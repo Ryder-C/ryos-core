@@ -2,6 +2,8 @@
   description = "fornax: home server";
 
   inputs.core.url = "github:Ryder-C/ryos-core";
+  # Host-only: the bot's package, for ry.claude-bot.
+  inputs.claude-discord-bot.url = "path:/shared/claude-discord-bot";
 
   outputs = inputs:
     inputs.core.lib.mkHost {
@@ -41,6 +43,9 @@
           cross-seed = ./secrets/cross-seed;
           anilist = ./secrets/anilist;
           matrix-registration = ./secrets/matrix-registration;
+          claude-bot-discord = ./secrets/claude-bot-discord;
+          claude-bot-anthropic = ./secrets/claude-bot-anthropic;
+          claude-bot-stripe = ./secrets/claude-bot-stripe;
         };
       };
 
@@ -71,12 +76,21 @@
         # claude-code and the shared MCP client that ry.nixflix.arr-mcp
         # registers with.
         ry.ai
+        ry.claude-bot
       ];
 
       aspect.nixos = {pkgs, ...}: {
         imports = [./hardware-configuration.nix];
         boot.supportedFilesystems = ["bcachefs"];
         environment.systemPackages = [pkgs.bcachefs-tools];
+
+        services.claude-discord-bot = {
+          package = inputs.claude-discord-bot.packages.${pkgs.stdenv.hostPlatform.system}.default;
+          settings = {
+            guild_id = 123456789012345678; # the server
+            admins = [123456789012345678]; # you
+          };
+        };
       };
     };
 }

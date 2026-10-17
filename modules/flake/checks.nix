@@ -39,6 +39,9 @@
       "cross-seed"
       "anilist"
       "matrix-registration"
+      "claude-bot-discord"
+      "claude-bot-anthropic"
+      "claude-bot-stripe"
     ]);
 in {
   flake.nixosConfigurations = {
@@ -129,8 +132,21 @@ in {
         ry.steam
         ry.steam.kiosk
         ry.ai
+        ry.claude-bot
       ];
-      aspect = fakeDisk;
+      aspect = {
+        includes = [fakeDisk];
+        # A real host takes the package from the bot's flake.
+        nixos = {pkgs, ...}: {
+          services.claude-discord-bot = {
+            package = pkgs.hello;
+            settings = {
+              guild_id = 1;
+              admins = [1];
+            };
+          };
+        };
+      };
     };
   };
 }
