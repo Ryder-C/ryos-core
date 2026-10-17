@@ -175,6 +175,23 @@
         "type": "github"
       }
     },
+    "claude-discord-bot": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792280831,
+        "narHash": "sha256-y78s4KbCE8SA7dWTh6UjZuYXAtWjbmhN5TCSaFCksbE=",
+        "path": "/shared/claude-discord-bot",
+        "type": "path"
+      },
+      "original": {
+        "path": "/shared/claude-discord-bot",
+        "type": "path"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1765145449,
@@ -1528,6 +1545,7 @@
         "catppuccin": "catppuccin",
         "catppuccin-stylus-json": "catppuccin-stylus-json",
         "claude-code": "claude-code",
+        "claude-discord-bot": "claude-discord-bot",
         "den": "den",
         "drainarr": "drainarr",
         "flake-file": "flake-file",

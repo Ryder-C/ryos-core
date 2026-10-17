@@ -4,11 +4,17 @@
 # Host secrets: claude-bot-discord (bot token), claude-bot-anthropic (API key),
 # claude-bot-stripe (secret key; sk_test_… while testing).
 # The host also sets, in its `aspect.nixos`:
-#   services.claude-discord-bot.package  (from the bot's flake)
 #   services.claude-discord-bot.settings.guild_id / .admins
-{
+{inputs, ...}: {
+  # A local checkout until the bot has a remote.
+  flake-file.inputs.claude-discord-bot = {
+    url = "path:/shared/claude-discord-bot";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+
   ry.claude-bot.nixos = {
     lib,
+    pkgs,
     secretFile,
     ...
   }: {
@@ -16,6 +22,7 @@
 
     services.claude-discord-bot = {
       enable = true;
+      package = lib.mkDefault inputs.claude-discord-bot.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
       discordTokenFile = secretFile "claude-bot-discord";
       anthropicApiKeyFile = secretFile "claude-bot-anthropic";

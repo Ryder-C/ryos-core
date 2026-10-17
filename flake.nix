@@ -24,6 +24,10 @@
       flake = false;
     };
     claude-code.url = "github:sadjow/claude-code-nix";
+    claude-discord-bot = {
+      url = "path:/shared/claude-discord-bot";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     den.url = "github:denful/den";
     drainarr = {
       url = "github:ryder-c/drainarr";

@@ -136,15 +136,9 @@ in {
       ];
       aspect = {
         includes = [fakeDisk];
-        # A real host takes the package from the bot's flake.
-        nixos = {pkgs, ...}: {
-          services.claude-discord-bot = {
-            package = pkgs.hello;
-            settings = {
-              guild_id = 1;
-              admins = [1];
-            };
-          };
+        nixos.services.claude-discord-bot.settings = {
+          guild_id = 1;
+          admins = [1];
         };
       };
     };
