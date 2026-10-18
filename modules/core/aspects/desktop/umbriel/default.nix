@@ -5,10 +5,10 @@
 }: let
   rylib = import ../../../_lib.nix;
 in {
-  flake-file.inputs.umbriel = {
-    url = "github:noctalia-dev/umbriel";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
+  # Binary cache only: the `cachix` branch trails main to the newest commit
+  # CI has pushed, and overriding any input (nixpkgs.follows included)
+  # changes the hash and misses the cache.
+  flake-file.inputs.umbriel.url = "github:noctalia-dev/umbriel/cachix";
 
   ry.umbriel = {
     includes = [(rylib.groups ["seat"]) ry.wayscriber];

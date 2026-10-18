@@ -52,15 +52,22 @@
         }: {
           imports = [./hardware-configuration.nix];
 
-          nixpkgs.overlays = [inputs.nix-cachyos-kernel.overlays.default];
+          # `pinned` builds the kernel against the nixpkgs lantian's Hydra used,
+          # so it can come from the attic cache below instead of compiling.
+          nixpkgs.overlays = [inputs.nix-cachyos-kernel.overlays.pinned];
           boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
           boot.kernelModules = ["wacom"];
 
           nix = {
             package = lib.mkForce pkgs.lix;
             settings = {
-              substituters = ["https://attic.xuyh0120.win/lantian"];
-              trusted-public-keys = ["lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="];
+              # lantian's attic cache (nix-cachyos-kernel's) is off for now:
+              # attic.xuyh0120.win resolves to unroutable addresses (198.18.0.8,
+              # fdbc:...) in public DNS as of 2026-10-18, and a substituter that
+              # times out makes every build fail without --fallback. Restore
+              # these two lines once it answers again.
+              # substituters = ["https://attic.xuyh0120.win/lantian"];
+              # trusted-public-keys = ["lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="];
             };
           };
 

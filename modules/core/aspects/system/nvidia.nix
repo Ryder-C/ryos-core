@@ -11,9 +11,11 @@ in {
       config,
       ...
     }: {
+      # NixOS CUDA team's cache: cache.nixos.org skips CUDA builds, so without
+      # this ollama-cuda and friends compile locally.
       nix.settings = {
-        substituters = ["https://cuda-maintainers.cachix.org"];
-        trusted-public-keys = ["cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="];
+        substituters = ["https://cache.nixos-cuda.org"];
+        trusted-public-keys = ["cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="];
       };
 
       services.xserver.videoDrivers = ["nvidia"];

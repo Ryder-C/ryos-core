@@ -84,10 +84,7 @@
     nixpkgs-lib.follows = "nixpkgs";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixvim.url = "github:Ryder-C/nixvim";
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    noctalia.url = "github:noctalia-dev/noctalia/cachix";
     nur.url = "github:nix-community/NUR/7b386c5c7fe4fde8cd4322ba2a85df7a5c3afcbf";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
@@ -115,10 +112,7 @@
       url = "github:JustTemmie/steam-presence";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    umbriel = {
-      url = "github:noctalia-dev/umbriel";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    umbriel.url = "github:noctalia-dev/umbriel/cachix";
     vesc-tool.url = "github:vedderb/vesc_tool";
     vpnconfinement.url = "github:Maroka-chan/VPN-Confinement";
     wayscriber = {

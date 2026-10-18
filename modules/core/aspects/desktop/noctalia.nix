@@ -1,16 +1,16 @@
 {inputs, ...}: let
   rylib = import ../../_lib.nix;
 in {
-  flake-file.inputs.noctalia = {
-    url = "github:noctalia-dev/noctalia-shell";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
+  # Binary cache only: the `cachix` branch trails main to the newest commit
+  # CI has pushed, and overriding any input (nixpkgs.follows included)
+  # changes the hash and misses the cache.
+  flake-file.inputs.noctalia.url = "github:noctalia-dev/noctalia/cachix";
 
   ry.noctalia = {
     nixos = {pkgs, ...}: {
       nix.settings = {
         substituters = ["https://noctalia.cachix.org"];
-        trusted-public-keys = ["noctalia.cachix.org-1:X+I9x9j4W6h6q5lG2G8uX+5f6L2yU8K5o9y9U+L6J9o="];
+        trusted-public-keys = ["noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="];
       };
 
       # Lets the drive-health plugin read SMART as the session user; its own
