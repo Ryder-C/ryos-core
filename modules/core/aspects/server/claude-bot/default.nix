@@ -43,8 +43,6 @@
           web_search = true;
           web_search_max_uses = 5;
           max_images = 4;
-          # Words that summon the bot without an @mention.
-          trigger_words = ["claude"];
           # Private notes on lingo, jokes and people, sent with every question (cached).
           # Claude saves them when asked, and updates them daily at learning_hour.
           memory = true;
