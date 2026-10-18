@@ -50,7 +50,7 @@
           # Also run that learning pass daily at learning_hour.
           learning = false;
           learning_hour = 4;
-          learning_max_messages = 400;
+          learning_max_messages = 2000;
         };
 
         billing = {
