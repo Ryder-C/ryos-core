@@ -38,56 +38,58 @@ in {
     in {
       imports = [
         inputs.noctalia.homeModules.default
-        (rylib.whenNiri {
-          programs.niri.settings = {
-            spawn-at-startup = lib.mkAfter [{command = ["noctalia"];}];
+        (rylib.whenUmbriel {
+          programs.umbriel.settings = {
+            general.autostart = ["noctalia"];
 
-            binds = let
-              msg = ["noctalia" "msg"];
+            keybinds = let
+              msg = cmd: "spawn:noctalia msg ${cmd}";
+              once = cmd: {
+                action = msg cmd;
+                repeat = false;
+              };
+              whenLocked = cmd: {
+                action = msg cmd;
+                allow_when_locked = true;
+              };
             in {
-              "Mod+Space" = {
-                action.spawn = msg ++ ["panel-toggle" "launcher"];
-                hotkey-overlay.title = "Toggle Application Launcher";
-              };
-              "Mod+Y" = {
-                action.spawn = msg ++ ["panel-toggle" "control-center" "notifications"];
-                hotkey-overlay.title = "Toggle Notifications";
-              };
-              "Mod+Comma" = {
-                action.spawn = msg ++ ["settings-toggle"];
-                hotkey-overlay.title = "Toggle Settings";
-              };
-              "Mod+X" = {
-                action.spawn = msg ++ ["panel-toggle" "session"];
-                hotkey-overlay.title = "Toggle Power Menu";
-              };
-              "Mod+V" = {
-                action.spawn = msg ++ ["panel-toggle" "clipboard"];
-                hotkey-overlay.title = "Toggle Clipboard Manager";
-              };
+              "Mod+Space" = once "panel-toggle launcher";
+              "Mod+Y" = once "panel-toggle control-center notifications";
+              "Mod+Comma" = once "settings-toggle";
+              "Mod+X" = once "panel-toggle session";
+              "Mod+V" = once "panel-toggle clipboard";
+              # Held-modifier switcher: tap for the last window, hold to pick.
+              "Alt+Tab" = once "window-switcher hold";
+
+              # Screenshots go through noctalia's capture (piped to satty below).
+              "Mod+S" = once "screenshot-region";
+              "Mod+Shift+S" = once "screenshot-fullscreen";
+              # Freeze every monitor and annotate over it.
+              "Mod+Alt+S" = once "screenshot-annotate";
 
               # Volume keys go through noctalia for the OSD.
-              "XF86AudioRaiseVolume" = {
-                allow-when-locked = true;
-                action.spawn = msg ++ ["volume-up"];
-              };
-              "XF86AudioLowerVolume" = {
-                allow-when-locked = true;
-                action.spawn = msg ++ ["volume-down"];
-              };
-              "XF86AudioMute" = {
-                allow-when-locked = true;
-                action.spawn = msg ++ ["volume-mute"];
-              };
+              "XF86AudioRaiseVolume" = whenLocked "volume-up";
+              "XF86AudioLowerVolume" = whenLocked "volume-down";
+              "XF86AudioMute" = (whenLocked "volume-mute") // {repeat = false;};
 
               # Search key (Mac F4) opens the launcher.
-              "XF86Search".action.spawn = msg ++ ["panel-toggle" "launcher"];
+              "XF86Search" = once "panel-toggle launcher";
             };
 
-            layer-rules = [
+            # Blur behind the bar, panels, notifications and OSDs. Panels and
+            # popups open over windows, so they blur the live content behind
+            # them; the bar only covers the wallpaper and keeps the cheaper
+            # cached blur.
+            layer_rule = [
               {
-                matches = [{namespace = "^noctalia-notification";}];
-                block-out-from = "screen-capture";
+                match.namespace = "^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$";
+                blur = true;
+                blur_ignore_alpha = 0.5;
+                blur_popups = true;
+              }
+              {
+                match.namespace = "^noctalia-(notification|dock|panel|attached-panel|osd)$";
+                blur_optimized = false;
               }
             ];
           };
@@ -119,7 +121,7 @@ in {
             avatar_path = "${config.home.homeDirectory}/.face";
             corner_radius_scale = 1.0;
             clipboard_enabled = true;
-            niri_overview_type_to_launch_enabled = true;
+            umbriel_overview_type_to_launch_enabled = true;
             settings_show_advanced = true;
             screenshot = {
               pipe_to_command = true;

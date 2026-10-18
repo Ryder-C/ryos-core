@@ -1,6 +1,6 @@
 {
   # tuigreet lists whatever sessions the display-manager knows about and
-  # remembers the last choice, so this works for niri, Plasma or both.
+  # remembers the last choice, so this works for umbriel, Plasma or both.
   ry.greetd.nixos = {
     config,
     lib,
@@ -16,7 +16,7 @@
           "--sessions"
           "${config.services.displayManager.sessionData.desktops}/share/wayland-sessions"
         ]
-        ++ lib.optionals config.programs.niri.enable ["--cmd" "niri-session"]);
+        ++ lib.optionals config.programs.umbriel.enable ["--cmd" "start-umbriel"]);
     };
 
     services.gnome.gnome-keyring.enable = true;

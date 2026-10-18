@@ -14,8 +14,8 @@ in rec {
   };
 
   # A home-manager module that only applies when `programs.<prog>` is
-  # declared, so app aspects can add niri keybinds or noctalia settings without
-  # depending on ry.niri / ry.noctalia. Only `config` may depend on `options`:
+  # declared, so app aspects can add umbriel keybinds or noctalia settings without
+  # depending on ry.umbriel / ry.noctalia. Only `config` may depend on `options`:
   # a module whose attribute names depend on `options` is an infinite recursion.
   whenProgram = prog: module: {
     options,
@@ -24,7 +24,7 @@ in rec {
   }: {
     config = lib.optionalAttrs (options.programs ? ${prog}) module;
   };
-  whenNiri = whenProgram "niri";
+  whenUmbriel = whenProgram "umbriel";
   whenNoctalia = whenProgram "noctalia";
 
   # Keep only packages that exist for this host's platform, so one app list

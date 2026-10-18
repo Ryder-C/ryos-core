@@ -21,7 +21,7 @@
       git
     ];
 
-    # niri + noctalia workstation.
+    # umbriel + noctalia workstation.
     desktop.includes = [
       base
       fonts
@@ -30,7 +30,7 @@
       bluetooth
       nix-ld
       input-remapper
-      niri
+      umbriel
       greetd
       noctalia
       catppuccin

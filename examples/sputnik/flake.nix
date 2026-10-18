@@ -26,18 +26,18 @@
         };
 
         homeManager = {lib, ...}: {
-          programs.niri.settings = {
-            debug.render-drm-device = "/dev/dri/renderD128";
-            switch-events = {
-              lid-close.action.spawn = ["sh" "-c" "niri msg action power-off-monitors"];
-              lid-open.action.spawn = ["sh" "-c" "sleep 0.5 && niri msg action power-on-monitors"];
+          # The Apple display controller is a KMS-only device; render on the
+          # AGX GPU instead. Read by wlroots at startup, which start-umbriel
+          # picks up from the login environment.
+          home.sessionVariables.WLR_RENDER_DRM_DEVICE = "/dev/dri/renderD128";
+
+          programs.umbriel.settings = {
+            events = {
+              lid_close = "umbriel msg dpms-off";
+              lid_open = "umbriel msg dpms-on";
             };
-            outputs."eDP-1" = {
-              mode = {
-                width = 3024;
-                height = 1964;
-                refresh = 120.000;
-              };
+            output."eDP-1" = {
+              mode = "3024x1964@120";
               scale = 2.0;
             };
           };

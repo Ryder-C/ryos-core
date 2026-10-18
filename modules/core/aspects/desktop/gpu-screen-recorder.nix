@@ -12,19 +12,18 @@ in {
 
     provides.replay = {
       nixos = let
-        # Both portal units ship an empty WantedBy, so nothing has started them
+        # The portal unit ships an empty WantedBy, so nothing has started it
         # at login. The screen_recorder plugin won't arm the replay buffer
-        # unless it can see both running (it scans /proc) and never triggers
-        # the D-Bus activation that would start them: a deadlock, not a race.
+        # unless it can see xdg-desktop-portal running (it scans /proc) and
+        # never triggers the D-Bus activation that would start it: a deadlock,
+        # not a race. The backend (xdg-desktop-portal-umbriel) is D-Bus
+        # activated by the portal on the first ScreenCast call.
         startWithSession = {
           overrideStrategy = "asDropin";
           wantedBy = ["graphical-session.target"];
         };
       in {
-        systemd.user.services = {
-          xdg-desktop-portal = startWithSession;
-          xdg-desktop-portal-gnome = startWithSession;
-        };
+        systemd.user.services.xdg-desktop-portal = startWithSession;
       };
 
       homeManager = {
@@ -81,7 +80,7 @@ in {
         ];
 
         # Kill the replay buffer at logout ourselves. It lives in noctalia's
-        # transient scope, which systemd stops in the same instant as niri and
+        # transient scope, which systemd stops in the same instant as umbriel and
         # pipewire; gpu-screen-recorder's SIGTERM handler only sets a flag its
         # capture loop polls, and that loop is already blocked on a capture
         # source that has gone away. So it hangs until the 90s stop timeout

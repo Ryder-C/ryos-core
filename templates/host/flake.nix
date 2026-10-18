@@ -35,7 +35,7 @@
           imports = [./hardware-configuration.nix];
         };
         homeManager = {
-          # programs.niri.settings.outputs."DP-1" = { ... };
+          # programs.umbriel.settings.output."DP-1" = { ... };
         };
       };
     };

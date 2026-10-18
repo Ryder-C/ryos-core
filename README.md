@@ -26,7 +26,7 @@ picks aspects.
         (ry.charger {device = "BAT0";})  # callable aspect
       ];
       aspect.nixos.imports = [./hardware-configuration.nix];
-      aspect.homeManager.programs.niri.settings.outputs = { /* ... */ };
+      aspect.homeManager.programs.umbriel.settings.output = { /* ... */ };
     };
 }
 ```
@@ -80,7 +80,7 @@ secrets/ wallpapers/ templates/host/ examples/<host>/
 Every aspect declares the flake inputs it uses next to itself
 (`flake-file.inputs.*`); `flake.nix` is generated with `nix run .#write-flake`.
 
-Profiles: `ry.base` (headless-capable), `ry.desktop` (niri + noctalia
+Profiles: `ry.base` (headless-capable), `ry.desktop` (umbriel + noctalia
 workstation), `ry.server` (base + ssh, never sleeps).
 
 ## Checks

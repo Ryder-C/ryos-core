@@ -18,8 +18,11 @@ in {
       ...
     }: {
       imports = [
-        (rylib.whenNiri {
-          programs.niri.settings.binds."Mod+Return".action.spawn = ["ghostty" "+new-window"];
+        (rylib.whenUmbriel {
+          programs.umbriel.settings.keybinds."Mod+Return" = {
+            action = "spawn:ghostty +new-window";
+            repeat = false;
+          };
         })
       ];
 

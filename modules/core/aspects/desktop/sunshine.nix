@@ -42,12 +42,9 @@ in {
           inherit (pkgs) cudaPackages;
         };
 
-        # Capture currently goes through wlgrab: niri does implement
-        # zwlr_screencopy_manager_v1, so Sunshine's wayland backend works and
-        # needs no privileges. CAP_SYS_ADMIN is kept only for the DRM/KMS
-        # fallback, which is what's left if screencopy ever goes away (niri
-        # still implements neither wlr-export-dmabuf, niri-wm/niri#2298, nor
-        # NvFBC).
+        # Capture goes through wlgrab (`capture = wlr`) against umbriel's
+        # virtual output, see homeManager below; it needs no privileges.
+        # CAP_SYS_ADMIN is kept only for the DRM/KMS fallback.
         capSysAdmin = true;
 
         # Don't start with the graphical session: this only drops the
@@ -62,6 +59,87 @@ in {
         # on the web UI can no longer save anything -- every app and every
         # resolution tweak would have to come back through here.
       };
+    };
+
+    # Stream a virtual umbriel output sized to the client instead of a
+    # physical monitor. Sunshine's own config stays in the web UI, so these
+    # three settings go there (Advanced / Audio-Video / General):
+    #   capture         = wlr
+    #   output_name     = sunshine
+    #   global_prep_cmd = [{"do":"/etc/profiles/per-user/<user>/bin/sunshine-umbriel-output create",
+    #                       "undo":"/etc/profiles/per-user/<user>/bin/sunshine-umbriel-output remove"}]
+    homeManager = {
+      config,
+      pkgs,
+      ...
+    }: {
+      imports = [
+        (rylib.whenUmbriel {
+          home.packages = [
+            (pkgs.writeShellApplication {
+              name = "sunshine-umbriel-output";
+              runtimeInputs = [config.programs.umbriel.package pkgs.jq pkgs.coreutils];
+              # Adapted from umbriel's docs/user/streaming.md.
+              text = ''
+                name=sunshine
+
+                case "''${1:-}" in
+                  create)
+                    umbriel output-destroy "$name" >/dev/null 2>&1 || true
+                    umbriel output-create "$name" \
+                      "''${SUNSHINE_CLIENT_WIDTH:-1920}x''${SUNSHINE_CLIENT_HEIGHT:-1080}@''${SUNSHINE_CLIENT_FPS:-60}" >/dev/null
+                    ;;
+                  remove)
+                    # Give windows the app's undo command is closing up to 5s to
+                    # go, so they don't flash onto a physical monitor.
+                    i=0
+                    while [ "$i" -lt 25 ]; do
+                      left="$(umbriel windows --json |
+                        jq --arg out "$name:" '[.[] | select(.workspace | startswith($out))] | length')"
+                      [ "$left" = 0 ] && break
+                      sleep 0.2
+                      i=$((i + 1))
+                    done
+                    # Move the rest explicitly: an evacuated window remembers the
+                    # output as home and would jump onto the next stream.
+                    target="$(umbriel workspaces --json |
+                      jq -r --arg out "$name" '[.[] | select(.output != $out and .active)]
+                        | (map(select(.focused)) + .) | first | "\(.name)/\(.output)" // empty')"
+                    for id in $(umbriel windows --json |
+                      jq -r --arg out "$name:" '.[] | select(.workspace | startswith($out)) | .id'); do
+                      [ -n "$target" ] || break
+                      umbriel msg "window-focus:$id"
+                      umbriel msg "window-move-to-workspace-silent:$target"
+                    done
+                    umbriel output-destroy "$name" >/dev/null 2>&1 || true
+                    ;;
+                  *)
+                    echo "usage: sunshine-umbriel-output create|remove" >&2
+                    exit 2
+                    ;;
+                esac
+              '';
+            })
+          ];
+
+          # Send Big Picture and Proton games to the stream. With no stream
+          # running the output doesn't exist and default_output is ignored.
+          # For a Wine-Wayland game that still sizes itself for a physical
+          # monitor, add `WAYLANDDRV_PRIMARY_MONITOR=sunshine %command%`.
+          programs.umbriel.settings.window_rule = [
+            {
+              match.app_id = "^steam$";
+              match.title = "[Bb]ig [Pp]icture";
+              default_output = "sunshine";
+              default_fullscreen = true;
+            }
+            {
+              match.app_id = "^steam_app_";
+              default_output = "sunshine";
+            }
+          ];
+        })
+      ];
     };
   };
 }

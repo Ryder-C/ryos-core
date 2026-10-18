@@ -56,7 +56,6 @@
       url = "github:kavishdevar/librepods/linux/rust";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    niri.url = "github:sodiboo/niri-flake";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -116,18 +115,15 @@
       url = "github:JustTemmie/steam-presence";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    umbriel = {
+      url = "github:noctalia-dev/umbriel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     vesc-tool.url = "github:vedderb/vesc_tool";
     vpnconfinement.url = "github:Maroka-chan/VPN-Confinement";
     wayscriber = {
       url = "github:devmobasa/wayscriber";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    xwayland-satellite = {
-      url = "github:Supreeeme/xwayland-satellite";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        rust-overlay.follows = "rust-overlay";
-      };
     };
   };
 }

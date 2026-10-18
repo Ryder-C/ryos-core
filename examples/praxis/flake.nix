@@ -76,18 +76,19 @@
             SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="0616", ATTR{authorized}="0"
           '';
 
-          # Nvidia high VRAM usage fix for Niri (and other Wayland compositors)
+          # Nvidia high VRAM usage fix for Wayland compositors
           # https://yalter.github.io/niri/Nvidia.html#high-vram-usage-fix
+          # Both names: the package's makeBinaryWrapper execs the real binary
+          # as `.umbriel-wrapped`.
           environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json".text = builtins.toJSON {
-            rules = [
-              {
+            rules =
+              map (name: {
                 pattern = {
                   feature = "procname";
-                  matches = "niri";
+                  matches = name;
                 };
                 profile = "Limit Free Buffer Pool On Wayland Compositors";
-              }
-            ];
+              }) ["umbriel" ".umbriel-wrapped"];
             profiles = [
               {
                 name = "Limit Free Buffer Pool On Wayland Compositors";
@@ -102,34 +103,34 @@
           };
         };
 
-        homeManager.programs.niri.settings = {
-          outputs = {
-            "HDMI-A-1" = {
-              mode = {
-                width = 3840;
-                height = 2160;
-                refresh = 239.995;
-              };
-              scale = 1.5;
-              variable-refresh-rate = false;
-              position = {
-                x = 0;
-                y = 0;
-              };
-            };
-            "DP-2" = {
-              mode = {
-                width = 3840;
-                height = 2160;
-                refresh = 59.997;
-              };
-              scale = 1.5;
-              position = {
-                x = -2560;
-                y = 0;
-              };
-            };
+        # HDR switches on by itself for fullscreen content that tags itself
+        # HDR (see PROTON_ENABLE_WAYLAND in the umbriel aspect); VRR only
+        # while something is fullscreen (the desktop stays at fixed refresh,
+        # as it was under niri); tearing only for fullscreen windows that ask
+        # for it.
+        # `umbriel color` / `umbriel tearing` show what actually engaged.
+        homeManager.programs.umbriel.settings.output = let
+          gaming = {
+            scale = 1.5;
+            hdr = "auto";
+            vrr = "fullscreen";
+            tearing = true;
+            direct_scanout = true;
           };
+        in {
+          "HDMI-A-1" =
+            gaming
+            // {
+              mode = "3840x2160@239.995";
+              position = [0 0];
+              focus_at_startup = true;
+            };
+          "DP-2" =
+            gaming
+            // {
+              mode = "3840x2160@59.997";
+              position = [(-2560) 0];
+            };
         };
       };
     };

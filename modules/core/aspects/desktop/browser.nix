@@ -9,7 +9,7 @@ in {
   ry.browser.homeManager = {pkgs, ...}: let
     helium-upstream = inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium;
     # Pin the Chromium password backend so it doesn't flip between
-    # gnome-libsecret (niri) and kwallet (Plasma); without this, switching
+    # gnome-libsecret (umbriel) and kwallet (Plasma); without this, switching
     # desktops corrupts the per-profile encryption key and wipes logins.
     helium = pkgs.symlinkJoin {
       name = "helium-wrapped-${helium-upstream.version}";
@@ -23,8 +23,11 @@ in {
     };
   in {
     imports = [
-      (rylib.whenNiri {
-        programs.niri.settings.binds."Mod+B".action.spawn = ["helium"];
+      (rylib.whenUmbriel {
+        programs.umbriel.settings.keybinds."Mod+B" = {
+          action = "spawn:helium";
+          repeat = false;
+        };
       })
     ];
 
