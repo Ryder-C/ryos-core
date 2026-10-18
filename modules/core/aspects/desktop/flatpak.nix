@@ -20,6 +20,20 @@
         remotes.flathub = "https://dl.flathub.org/repo/flathub.flatpakrepo";
         packages = ["flathub:app/com.github.tchx84.Flatseal/x86_64/stable"];
       };
+
+      # The activation sync is a oneshot WantedBy graphical-session.target,
+      # and a target waits for every oneshot it pulls in to finish. Whenever
+      # the flatpak config changed, the whole session (portal, ghostty's
+      # D-Bus service, everything After the target) sat behind a minute-long
+      # download. DefaultDependencies=no drops that implicit After=; the rest
+      # of what it normally adds is restored by hand. Still a oneshot, so
+      # manage-flatpaks-auto keeps waiting for it.
+      systemd.user.services.manage-flatpaks-activation.Unit = {
+        DefaultDependencies = false;
+        After = ["basic.target"];
+        Conflicts = ["shutdown.target"];
+        Before = ["shutdown.target"];
+      };
     };
 
     provides = {
