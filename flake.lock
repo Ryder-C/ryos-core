@@ -182,8 +182,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1792307901,
-        "narHash": "sha256-LLROqE3Ig3cmig3eWo/p1KloCD/wEGFANmPYnYtmc/c=",
+        "lastModified": 1792308555,
+        "narHash": "sha256-kCiqBYpkvqmPgKeob9A25kgIDqk6CpaT6reGye0GNgc=",
         "path": "/shared/claude-discord-bot",
         "type": "path"
       },
