@@ -42,7 +42,16 @@
           channel_history = 20;
           web_search = true;
           web_search_max_uses = 5;
+          # Open links in the conversation; a page costs its tokens, capped per page.
+          web_fetch = true;
+          web_fetch_max_uses = 3;
+          web_fetch_max_content_tokens = 20000;
           max_images = 4;
+          # Embed the server's whole history locally and send the stretches of
+          # conversation closest in meaning to each question.
+          recall = true;
+          recall_chunks = 20;
+          recall_min_score = 0.6;
           # Private notes on lingo, jokes and people, sent with every question (cached).
           # Claude keeps them up to date while chatting; /admin learn has it read recent chat.
           memory = true;
