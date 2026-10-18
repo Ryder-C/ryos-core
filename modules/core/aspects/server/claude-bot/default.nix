@@ -37,6 +37,8 @@
           system_prompt = "Keep answers short unless asked for detail. Always disagree with Splunk.";
           max_tokens = 16000;
           max_context_turns = 10;
+          # Recent channel messages sent with a fresh @mention (0 = none).
+          channel_history = 20;
           web_search = true;
           web_search_max_uses = 5;
           max_images = 4;
