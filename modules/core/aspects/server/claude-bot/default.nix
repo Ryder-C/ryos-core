@@ -50,7 +50,9 @@
           # Embed the server's whole history locally and send the stretches of
           # conversation closest in meaning to each question.
           recall = true;
-          recall_chunks = 20;
+          recall_chunks = 10;
+          # Stretches on either side of each match, for the surrounding conversation.
+          recall_neighbors = 1;
           recall_min_score = 0.6;
           # Private notes on lingo, jokes and people, sent with every question (cached).
           # Claude keeps them up to date while chatting; /admin learn has it read recent chat.
