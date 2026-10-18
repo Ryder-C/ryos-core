@@ -42,6 +42,9 @@
           web_search = true;
           web_search_max_uses = 5;
           max_images = 4;
+          # Notes Claude saves when asked (@Claude remember that …), sent with every question.
+          memory = true;
+          max_memories = 100;
         };
 
         billing = {
