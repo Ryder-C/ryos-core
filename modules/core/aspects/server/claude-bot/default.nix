@@ -44,10 +44,11 @@
           web_search_max_uses = 5;
           max_images = 4;
           # Private notes on lingo, jokes and people, sent with every question (cached).
-          # Claude saves them when asked, and updates them daily at learning_hour.
+          # Claude keeps them up to date while chatting; /admin learn has it read recent chat.
           memory = true;
           max_memories = 50;
-          learning = true;
+          # Also run that learning pass daily at learning_hour.
+          learning = false;
           learning_hour = 4;
           learning_max_messages = 400;
         };
