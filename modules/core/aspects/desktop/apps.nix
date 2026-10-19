@@ -49,6 +49,7 @@ in {
           })
         ];
         homeManager = {
+          config,
           pkgs,
           lib,
           ...
@@ -78,6 +79,13 @@ in {
               target-colorspace-hint-mode = "source";
             };
           };
+          # 3.x ships its own library browser and opens it at login; start in
+          # the tray so only casts bring up a window. A CLI flag rather than
+          # `settings`, which would make the shim's self-written conf.json a
+          # read-only symlink.
+          systemd.user.services.jellyfin-mpv-shim.Service.ExecStart =
+            lib.mkIf pkgs.stdenv.hostPlatform.isLinux
+            (lib.mkForce "${lib.getExe config.services.jellyfin-mpv-shim.package} --minimized");
         };
       };
 
