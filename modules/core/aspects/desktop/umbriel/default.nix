@@ -69,10 +69,46 @@ in {
     };
 
     homeManager = {
+      config,
       lib,
       pkgs,
       ...
-    }: {
+    }: let
+      cfg = config.programs.umbriel;
+
+      # hdr = "auto" can't help browsers or mpv-based players: an output in
+      # SDR is described to clients as SDR, so they never ask for HDR content
+      # and nothing ever triggers the switch. config-hdr.toml is the same
+      # config with every "auto" output forced on; Mod+Shift+H swaps between
+      # the two for the session (config-replace doesn't survive a restart, so
+      # every login starts on auto).
+      hdrForced =
+        cfg.settings
+        // {
+          output =
+            lib.mapAttrs (_: o:
+              if (o.hdr or null) == "auto"
+              then o // {hdr = "on";}
+              else o) (cfg.settings.output or {});
+        };
+      hdrToggle = pkgs.writeShellApplication {
+        name = "umbriel-hdr-toggle";
+        runtimeInputs = [cfg.package pkgs.jq pkgs.libnotify];
+        text = ''
+          dir="''${XDG_CONFIG_HOME:-$HOME/.config}/umbriel"
+          if umbriel color --json | jq -e '[.outputs[].hdr_mode] | index("on")' >/dev/null; then
+            umbriel config-replace "$dir/config.toml"
+            notify-send -a Umbriel -i video-display "HDR auto" "HDR only for fullscreen HDR content"
+          else
+            umbriel config-replace "$dir/config-hdr.toml"
+            notify-send -a Umbriel -i video-display "HDR on" "Mod+Shift+H to go back to auto"
+          fi
+        '';
+      };
+    in {
+      xdg.configFile."umbriel/config-hdr.toml".source =
+        (pkgs.formats.toml {}).generate "umbriel-config-hdr.toml" hdrForced;
+
       imports = [
         inputs.umbriel.homeModules.default
         ./_window-rules.nix
@@ -257,6 +293,9 @@ in {
               };
 
               "Mod+Shift+Q" = once "session-quit:skip-confirmation";
+
+              # Force HDR on for browsers/Jellyfin, or back to auto.
+              "Mod+Shift+H" = once "spawn:${lib.getExe hdrToggle}";
 
               # Media keys
               "XF86AudioPlay" = once "spawn:playerctl play-pause";
