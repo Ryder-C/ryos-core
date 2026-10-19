@@ -62,6 +62,22 @@ in {
             jellyfin-desktop
             libvlc
           ]);
+
+          # Cast target for Jellyfin (web UI / phone app -> "mpv-shim"),
+          # playing in a native mpv window. jellyfin-desktop can't do HDR: it
+          # draws libmpv into an sRGB Qt surface. hint=yes tags the surface
+          # with the video's own colorspace even while the output is SDR, which
+          # is what umbriel's hdr = "auto" waits for (mpv's default only hints
+          # when the display already advertises HDR).
+          services.jellyfin-mpv-shim = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+            enable = true;
+            mpvConfig = {
+              vo = "gpu-next";
+              gpu-api = "vulkan";
+              target-colorspace-hint = "yes";
+              target-colorspace-hint-mode = "source";
+            };
+          };
         };
       };
 
