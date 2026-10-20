@@ -20,7 +20,14 @@
       if v == null
       then (config.age.secrets.${name}.path or (rylib.missingSecret host name))
       else if builtins.isPath v
-      then v
+      # Copy the file alone so its store path tracks only its contents; a
+      # bare flake path points into the whole host source and changes (and
+      # restarts every consumer) on any edit to the host flake, lock included.
+      then
+        builtins.path {
+          path = v;
+          name = "secret-${name}";
+        }
       else pkgs.writeText "secret-${name}" v;
 
     # The literal secret, for configs that cannot read a file at runtime.
