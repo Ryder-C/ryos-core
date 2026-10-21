@@ -52,6 +52,7 @@ in {
         ry.steam.presence
         ry.games
         ry.aagl
+        ry.deadband
         ry.davinci-resolve
         ry.torrents
         ry.ollama

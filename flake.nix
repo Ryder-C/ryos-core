@@ -35,6 +35,10 @@
       inputs.nixpkgs-lib.follows = "nixpkgs-lib";
     };
     flatpaks.url = "github:in-a-dil-emma/declarative-flatpak";
+    gamesir-linux-tools = {
+      url = "git+https://codeberg.org/Epaphroditus/gamesir-linux-tools-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     helium = {
       url = "github:schembriaiden/helium-browser-nix-flake";
       inputs.nixpkgs.follows = "nixpkgs";

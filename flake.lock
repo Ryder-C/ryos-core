@@ -666,6 +666,27 @@
         "type": "github"
       }
     },
+    "gamesir-linux-tools": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "upstream-src": "upstream-src"
+      },
+      "locked": {
+        "lastModified": 1788391522,
+        "narHash": "sha256-gwCv/WyX9/aqS96dl4FrHWHhJNeOhEYlSjsja3APi10=",
+        "ref": "refs/heads/master",
+        "rev": "69801573f26436ecd1e24b077489142c217c761b",
+        "revCount": 7,
+        "type": "git",
+        "url": "https://codeberg.org/Epaphroditus/gamesir-linux-tools-nix"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://codeberg.org/Epaphroditus/gamesir-linux-tools-nix"
+      }
+    },
     "haumea": {
       "inputs": {
         "nixpkgs": [
@@ -1512,6 +1533,7 @@
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
         "flatpaks": "flatpaks",
+        "gamesir-linux-tools": "gamesir-linux-tools",
         "helium": "helium",
         "home-manager": "home-manager_2",
         "humanizer": "humanizer",
@@ -2039,6 +2061,22 @@
         "owner": "noctalia-dev",
         "ref": "cachix",
         "repo": "umbriel",
+        "type": "github"
+      }
+    },
+    "upstream-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788371882,
+        "narHash": "sha256-LZBb6FAIkUFSGrFfxznj9A/HcTa+r6lQTBbGmBB7qjE=",
+        "owner": "broroeror",
+        "repo": "gamesir-linux-tools",
+        "rev": "095c46d6c400971d52275dfed10d6b7fc1fcd1d7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "broroeror",
+        "repo": "gamesir-linux-tools",
         "type": "github"
       }
     },
