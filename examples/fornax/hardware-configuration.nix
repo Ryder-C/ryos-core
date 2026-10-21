@@ -4,6 +4,7 @@
 {
   config,
   lib,
+  pkgs,
   modulesPath,
   ...
 }: {
@@ -73,6 +74,16 @@
       options = ["noatime" "nofail" "discard" "x-systemd.mount-timeout=1h"];
     };
   };
+
+  # The fs is unencrypted, but NixOS still generates unlock-bcachefs-storage,
+  # whose ExecCondition runs `bcachefs unlock -c` and opens a member disk
+  # O_EXCL. Its device is the by-uuid link, which all four members share, so
+  # udev repoints it as each disk is probed and BindsTo= re-fires the check
+  # each time. One re-fire landed while mount(2) was assembling the fs, the
+  # kernel got EBUSY on that disk, and with nofail nothing retried: /storage
+  # stayed unmounted for the whole boot. Exit 1 marks the unit skipped, which
+  # still satisfies storage.mount's Requires=, without touching the disks.
+  systemd.services."unlock-bcachefs-storage".serviceConfig.ExecCondition = lib.mkForce "${pkgs.coreutils}/bin/false";
 
   swapDevices = [];
 

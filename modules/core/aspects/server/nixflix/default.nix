@@ -118,6 +118,14 @@ in {
                   # nixflix defaults this to off whenever the Sonarr/Radarr ->
                   # Jellyfin "Connect" notification is on. Keep both.
                   enableRealtimeMonitor = true;
+                  # Jellyfin's own image writes into a media folder make its
+                  # LibraryMonitor ignore that folder (and its parent) for a
+                  # hardcoded 45s, dropping both watcher events and arr
+                  # /Library/Media/Updated calls. Back-to-back imports then
+                  # only surface the first episode until a full scan
+                  # (jellyfin/jellyfin#16215). Keep artwork in Jellyfin's
+                  # metadata dir instead.
+                  saveLocalMetadata = false;
                 };
 
                 # The module's typeOptions only know TMDb/OMDb (plus AniDB for

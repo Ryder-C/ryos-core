@@ -14,6 +14,10 @@ in {
       dataDir = "/var/lib/nixflix/bazarr";
     };
 
+    # The library it subtitles lives on /storage. Without this it starts
+    # against the bare mountpoint whenever /storage fails to mount.
+    systemd.services.bazarr.unitConfig.RequiresMountsFor = "/storage";
+
     # CDI device passthrough so the Whisper container can reach the GPU. The
     # toolkit generates the CDI spec against the driver ry.nvidia installs.
     hardware.nvidia-container-toolkit.enable = true;
