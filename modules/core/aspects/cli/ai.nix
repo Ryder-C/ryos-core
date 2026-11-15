@@ -101,6 +101,9 @@
         pi-coding-agent.enable = true;
       };
 
+      # Plugins outside programs.mcp (e.g. browser-use) expect uvx on PATH.
+      home.packages = [pkgs.uv];
+
       home.file.".claude/statusline-command.sh" = {
         executable = true;
         text = ''
