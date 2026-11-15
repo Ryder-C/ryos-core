@@ -23,6 +23,19 @@
         ];
       };
 
+      # "Open to LAN" binds a random ephemeral port (kernel range
+      # 32768-60999) unless one is typed into the dialog (1024-65535).
+      # UDP 4445 is the multicast LAN-world announcement.
+      prism.nixos.networking.firewall = {
+        allowedTCPPortRanges = [
+          {
+            from = 32768;
+            to = 60999;
+          }
+        ];
+        allowedUDPPorts = [4445];
+      };
+
       prism.homeManager = {
         pkgs,
         stablePkgs,
