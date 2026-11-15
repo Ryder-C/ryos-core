@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  inputs,
+  ry,
+  ...
+}: {
   flake-file.inputs = {
     claude-code.url = "github:sadjow/claude-code-nix";
     humanizer = {
@@ -9,7 +13,36 @@
 
   # Coding agents and the MCP servers they share. Model providers that only
   # exist on some hosts (ry.ollama) register themselves.
+  # ry.ai.onshape: Onshape CAD MCP server (needs the `onshape` secret).
   ry.ai = {
+    provides.onshape = {
+      includes = [ry.agenix];
+
+      # dotenv-style: ONSHAPE_ACCESS_KEY=... / ONSHAPE_SECRET_KEY=...
+      # (keys from https://dev-portal.onshape.com/).
+      nixos = {ageSecret, ...}: {
+        age.secrets = ageSecret "onshape" {
+          owner = "ryder";
+          mode = "0400";
+        };
+      };
+
+      homeManager = {
+        osConfig,
+        lib,
+        pkgs,
+        ...
+      }: {
+        programs.mcp.servers.onshape.command = lib.getExe (pkgs.writeShellScriptBin "onshape-mcp" ''
+          set -a
+          . ${osConfig.age.secrets.onshape.path}
+          set +a
+          exec ${lib.getExe' pkgs.uv "uvx"} \
+            --from git+https://github.com/hedless/onshape-mcp@v0.4.0 onshape-mcp
+        '');
+      };
+    };
+
     nixos.nixpkgs.overlays = [
       inputs.claude-code.overlays.default
       # aioboto3/fastmcp installCheck tests fail with "Duplicate 'Server'

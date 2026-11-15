@@ -9,4 +9,5 @@ in {
   "cloudflare-api-token.age".publicKeys = hosts;
   "steam_key.age".publicKeys = hosts;
   "google-maps.age".publicKeys = hosts;
+  "onshape.age".publicKeys = [praxis];
 }
