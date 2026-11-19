@@ -124,6 +124,8 @@ in {
             umbriel_overview_type_to_launch_enabled = true;
             settings_show_advanced = true;
             screenshot = {
+              # satty decides whether to save or copy.
+              save_to_file = false;
               pipe_to_command = true;
               pipe_command = "satty -f -";
             };
