@@ -19,6 +19,9 @@
         enable = true;
         remotes.flathub = "https://dl.flathub.org/repo/flathub.flatpakrepo";
         packages = ["flathub:app/com.github.tchx84.Flatseal/x86_64/stable"];
+        # Sync from the graphical session (the v4.2 default; set explicitly
+        # to silence its trace).
+        runWithoutGui = false;
       };
 
       # The activation sync is a oneshot WantedBy graphical-session.target,
