@@ -25,7 +25,7 @@ in {
     imports = [
       (rylib.whenUmbriel {
         programs.umbriel.settings.keybinds."Mod+B" = {
-          action = "spawn:helium";
+          action = "spawn helium";
           repeat = false;
         };
       })

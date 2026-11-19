@@ -20,7 +20,7 @@ in {
       imports = [
         (rylib.whenUmbriel {
           programs.umbriel.settings.keybinds."Mod+Return" = {
-            action = "spawn:ghostty +new-window";
+            action = "spawn ghostty +new-window";
             repeat = false;
           };
         })

@@ -200,10 +200,10 @@ in {
             };
             workspaces = lib.range 1 9;
             perWorkspace = key: action:
-              builtins.listToAttrs (map (n: lib.nameValuePair "${key}${toString n}" "${action}:${toString n}") workspaces);
+              builtins.listToAttrs (map (n: lib.nameValuePair "${key}${toString n}" "${action} ${toString n}") workspaces);
             # Moving a window across outputs lands it wherever the target's
             # strip is scrolled; pull its column to the front so it's in view.
-            toOutput = dir: "spawn:umbriel msg window-move-to-output-${dir} && umbriel msg column-move-to-first";
+            toOutput = dir: "spawn umbriel msg window-move-to-output-${dir} && umbriel msg column-move-to-first";
           in
             perWorkspace "Mod+" "workspace-switch"
             // perWorkspace "Mod+Shift+" "column-move-to-workspace"
@@ -256,7 +256,7 @@ in {
               "Mod+O" = once "overview-toggle";
               "Mod+W" = once "column-toggle-tabbed";
               # scrolling -> dwindle -> master
-              "Mod+T" = once "workspace-set-layout:toggle";
+              "Mod+T" = once "workspace-set-layout toggle";
 
               # Sizing
               "Mod+F" = once "window-toggle-maximize";
@@ -264,10 +264,10 @@ in {
               "Mod+Shift+F" = once "window-toggle-fullscreen";
               "Mod+R" = "window-cycle-primary-extent";
               "Mod+Shift+R" = "window-cycle-primary-extent-back";
-              "Mod+Minus" = "window-modify-primary-extent:-0.05";
-              "Mod+Equal" = "window-modify-primary-extent:0.05";
-              "Mod+Shift+Minus" = "window-modify-secondary-extent:-0.05";
-              "Mod+Shift+Equal" = "window-modify-secondary-extent:0.05";
+              "Mod+Minus" = "window-modify-primary-extent -0.05";
+              "Mod+Equal" = "window-modify-primary-extent 0.05";
+              "Mod+Shift+Minus" = "window-modify-secondary-extent -0.05";
+              "Mod+Shift+Equal" = "window-modify-secondary-extent 0.05";
               "Mod+MouseMiddle" = "layout-scroll-drag";
 
               # Floating / pinned
@@ -292,19 +292,19 @@ in {
                 repeat = false;
               };
 
-              "Mod+Shift+Q" = once "session-quit:skip-confirmation";
+              "Mod+Shift+Q" = once "session-quit skip-confirmation";
 
               # Force HDR on for browsers/Jellyfin, or back to auto.
-              "Mod+Shift+H" = once "spawn:${lib.getExe hdrToggle}";
+              "Mod+Shift+H" = once "spawn ${lib.getExe hdrToggle}";
 
               # Media keys
-              "XF86AudioPlay" = once "spawn:playerctl play-pause";
-              "XF86AudioNext" = "spawn:playerctl next";
-              "XF86AudioPrev" = "spawn:playerctl previous";
+              "XF86AudioPlay" = once "spawn playerctl play-pause";
+              "XF86AudioNext" = "spawn playerctl next";
+              "XF86AudioPrev" = "spawn playerctl previous";
 
               # Brightness keys; noctalia shows the OSD on its own.
-              "XF86MonBrightnessUp" = whenLocked "spawn:brightnessctl set 5%+";
-              "XF86MonBrightnessDown" = whenLocked "spawn:brightnessctl set 5%-";
+              "XF86MonBrightnessUp" = whenLocked "spawn brightnessctl set 5%+";
+              "XF86MonBrightnessDown" = whenLocked "spawn brightnessctl set 5%-";
 
               # Mission Control key (Mac F3) opens the overview.
               "XF86LaunchA" = once "overview-toggle";

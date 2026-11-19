@@ -43,7 +43,7 @@ in {
             general.autostart = ["noctalia"];
 
             keybinds = let
-              msg = cmd: "spawn:noctalia msg ${cmd}";
+              msg = cmd: "spawn noctalia msg ${cmd}";
               once = cmd: {
                 action = msg cmd;
                 repeat = false;

@@ -25,7 +25,7 @@ in {
         # compositor discards its stderr). Skipping the detach runs the overlay in the
         # foreground instead, which is what upstream's own daemon does.
         programs.umbriel.settings.keybinds."Mod+D" = {
-          action = "spawn:WAYSCRIBER_NO_DETACH=1 ${wayscriber}/bin/wayscriber --active";
+          action = "spawn WAYSCRIBER_NO_DETACH=1 ${wayscriber}/bin/wayscriber --active";
           repeat = false;
         };
       })
