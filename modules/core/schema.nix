@@ -1,9 +1,17 @@
 # Typed host facts. Hosts set these through `mkHost { facts = { ... }; }`;
 # aspects read them as `host.<fact>` (parametric or flat-form class modules).
-{lib, ...}: {
+{
+  den,
+  lib,
+  ...
+}: {
   den.schema.user.config.classes = lib.mkDefault ["homeManager"];
 
   den.schema.host = {
+    # Users' own nixos content (e.g. ryder's agenix identity) reaches their
+    # hosts. Explicit since den's transition default ends 2027-01-01.
+    includes = [den.batteries.user-aspects];
+
     options = {
       flakePath = lib.mkOption {
         type = lib.types.str;
