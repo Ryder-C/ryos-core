@@ -23,5 +23,15 @@
       # ryder's SSH key is what agenix decrypts core secrets with.
       age.identityPaths = ["${config.users.users.ryder.home}/.ssh/id_ed25519"];
     };
+
+    homeManager.programs.ssh = {
+      enable = true;
+      # Skip HM's deprecated implicit `Host *` defaults.
+      enableDefaultConfig = false;
+      matchBlocks.voron = {
+        hostname = "voron0.local";
+        user = "pi";
+      };
+    };
   };
 }
