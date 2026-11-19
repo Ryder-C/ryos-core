@@ -102,14 +102,14 @@ in {
                     done
                     # Move the rest explicitly: an evacuated window remembers the
                     # output as home and would jump onto the next stream.
-                    target="$(umbriel workspaces --json |
+                    read -r target_ws target_out < <(umbriel workspaces --json |
                       jq -r --arg out "$name" '[.[] | select(.output != $out and .active)]
-                        | (map(select(.focused)) + .) | first | "\(.name)/\(.output)" // empty')"
+                        | (map(select(.focused)) + .) | first // empty | "\(.name) \(.output)"') || true
                     for id in $(umbriel windows --json |
                       jq -r --arg out "$name:" '.[] | select(.workspace | startswith($out)) | .id'); do
-                      [ -n "$target" ] || break
-                      umbriel msg "window-focus:$id"
-                      umbriel msg "window-move-to-workspace-silent:$target"
+                      [ -n "''${target_ws:-}" ] || break
+                      umbriel msg window-focus "$id"
+                      umbriel msg window-move-to-workspace-silent --name "$target_ws" --output "$target_out"
                     done
                     umbriel output-destroy "$name" >/dev/null 2>&1 || true
                     ;;
