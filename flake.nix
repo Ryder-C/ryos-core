@@ -69,10 +69,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
-    nix-pia-vpn = {
-      url = "github:rcambrj/nix-pia-vpn";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-yazi-plugins = {
       url = "github:lordkekz/nix-yazi-plugins";
       inputs.nixpkgs.follows = "nixpkgs";

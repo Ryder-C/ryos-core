@@ -1,13 +1,4 @@
-{
-  inputs,
-  ry,
-  ...
-}: {
-  flake-file.inputs.nix-pia-vpn = {
-    url = "github:rcambrj/nix-pia-vpn";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
-
+{ry, ...}: {
   # qBittorrent bound to a PIA WireGuard tunnel with port forwarding, plus
   # `vpn-full on|off` to route the whole host through it. Needs the `pia`
   # secret (core agenix by default). If a `cross-seed` secret ({ apiKey })
@@ -76,7 +67,8 @@
         text = builtins.readFile ./_vpn-full.sh;
       };
     in {
-      imports = [inputs.nix-pia-vpn.nixosModules.default];
+      # Vendored nix-pia-vpn module, patched for PIA's token API change.
+      imports = [./_pia-vpn.nix];
 
       age.secrets = ageSecret "pia" {};
 
@@ -147,6 +139,37 @@
               RestartSec = "5s";
               StartLimitBurst = 10;
             };
+          };
+          # pia-vpn is a oneshot that never notices when PIA's side goes away
+          # (server retired, or our key dropped after a server restart), so wg0
+          # silently black-holes. Probe the tunnel and reconnect when it's dead;
+          # restarting pia-vpn picks a fresh server and re-registers the key.
+          pia-vpn-watchdog = {
+            description = "Reconnect PIA when wg0 stops passing traffic";
+            path = with pkgs; [iputils curl jq systemd coreutils];
+            script = ''
+              systemctl is-active --quiet pia-vpn.service || exit 0
+              vip=$(jq -r .server_vip /var/lib/pia-vpn/wireguard.json)
+              alive() {
+                ping -q -c 3 -W 2 -I wg0 "$vip" >/dev/null 2>&1 ||
+                  curl -s -m 5 --interface wg0 -o /dev/null https://1.1.1.1
+              }
+              # Three misses 30s apart before acting, so a blip doesn't cost the port.
+              for _ in 1 2 3; do
+                alive && exit 0
+                sleep 30
+              done
+              echo "wg0 unreachable via $vip; restarting pia-vpn"
+              systemctl restart pia-vpn.service
+            '';
+            serviceConfig.Type = "oneshot";
+          };
+        };
+        timers.pia-vpn-watchdog = {
+          wantedBy = ["timers.target"];
+          timerConfig = {
+            OnBootSec = "10min";
+            OnUnitActiveSec = "5min";
           };
         };
       };
