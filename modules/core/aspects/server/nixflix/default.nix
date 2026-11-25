@@ -189,23 +189,19 @@ in {
               # branding.customCss = ''@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");'';
             };
 
-            # The "Emby / Jellyfin" Connect entry nixflix adds to each arr is
-            # built from the arr's schema template, where every trigger is
-            # false, so it never fired. Extra attrs here are merged into the
-            # payload (top-level keys and matching field values) on every run.
-            # Sonarr and Radarr share this; each ignores the other's keys.
-            notif.jellyfin = {
+            # Refresh Jellyfin on imports, renames and deletes. Grabs, new
+            # series and app updates change nothing on disk, so skip them.
+            notif.jellyfin = let
+              quiet = {
+                onGrab = false;
+                onApplicationUpdate = false;
+              };
+              sonarr = quiet // {onSeriesAdd = false;};
+            in {
               updateLibrary = true;
-              onDownload = true;
-              onUpgrade = true;
-              onImportComplete = true;
-              onRename = true;
-              onSeriesDelete = true;
-              onEpisodeFileDelete = true;
-              onEpisodeFileDeleteForUpgrade = true;
-              onMovieDelete = true;
-              onMovieFileDelete = true;
-              onMovieFileDeleteForUpgrade = true;
+              inherit sonarr;
+              sonarr-anime = sonarr;
+              radarr = quiet;
             };
 
             seerr = {
